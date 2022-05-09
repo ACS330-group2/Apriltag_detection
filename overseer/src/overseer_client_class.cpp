@@ -11,6 +11,7 @@
 #include <col_to_tasks.h>
 #include <assembly_tasks.h>
 #include <std_msgs/Char.h>
+#include <std_msgs/String.h>
 
 void spinThread()
 {
@@ -38,6 +39,7 @@ private:
 	int block_pos;
 	unsigned int microsecond;
 	ros::Subscriber detected;
+	ros::Subscriber order;
 	
 
 public:
@@ -47,6 +49,7 @@ public:
 	actionlib::SimpleActionClient<low_level_controller::ll_client_serverAction> acO("output", true);
 	ROS_INFO("%s: Activated", overseer_id.c_str());
 	detected = n.subscribe("color_detected", 1000, &Overseer::detectionCallback,this);
+	detected = n.subscribe("order", 1000, &Overseer::orderCallback,this);
 		
 
 	char storageStr[16]={'.','.','.','r','.','.','.','.','b','.','.','.','.','.','g','.'};
@@ -64,7 +67,8 @@ while(ros::ok()){
 	char colour;
 	bool full = true;
 	std::string XY;
-	char combination[3] = {'r','b','g'};
+	char combination[3] = {'r','g','b'};
+	colour = 'o';
 	
 
 
@@ -77,14 +81,14 @@ ROS_INFO("Sending goals.");
 	actionlib::SimpleClientGoalState state_O = acO.getState();
 
 	//goal combined
-	while( colour == NULL&&ros::ok())
+	while( colour == 'o'&&ros::ok()&&combination[1] == 'o')
 {
-	ROS_INFO("no colour detetcted");
+	ROS_INFO("no input detetcted");
 	ros::spinOnce();
 	usleep(1*microsecond); // sleeps for 3 seconds
 }
 
-	if(state_I.toString() != "Active"){
+	if(state_I.toString() != "Active"&&colour != 'o'){
 	ROS_INFO("Input sending goals");
 	for(int i = 0; i <=15;i++){
 	if(storageStr[i] == '.')
@@ -124,7 +128,7 @@ ROS_INFO("Sending goals.");
 	}
 	//unsigned int microsecond = 1000000;
 	usleep(3*microsecond); // sleeps for 3 seconds
-	if(state_O.toString() != "Active")
+	if(state_O.toString() != "Active"&&combination[1] != 'o')
 {
 	ROS_INFO("Output sending goals");
 	for(int n = 0;n<=2;n++){
@@ -168,7 +172,7 @@ ROS_INFO("Sending goals.");
 
 
 		
-		
+	ros::spinOnce();	
 	}
 	}
 void detectionCallback(const std_msgs::Char::ConstPtr& detected)
@@ -176,9 +180,20 @@ void detectionCallback(const std_msgs::Char::ConstPtr& detected)
 	if(detected->data =='r'||detected->data =='b'||detected->data =='g')
 	{
 	colour = detected->data;
+	ROS_INFO("colour recieved");
 	}
 	else{
-	colour = NULL;
+	colour = 'o';
+	}
+}
+
+void orderCallback(const std_msgs::String::ConstPtr& order)
+{
+	if(order->data[0] != 'o'){
+	combination[0] = order->data[0];
+	combination[1] = order->data[1];
+	combination[2] = order->data[2];
+	ROS_INFO("order recieved");
 	}
 }
 

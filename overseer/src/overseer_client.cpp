@@ -72,7 +72,7 @@ ROS_INFO("Sending goals.");
 		break;
 	}
 	storageStr[dot_pos]=colour;
-	int temp = dot_pos*5;
+	int temp = dot_pos*5 + 40;
 	XY=std::to_string(temp) += ".14";
 	location = {XY};
 
@@ -114,7 +114,7 @@ ROS_INFO("Sending goals.");
 			break;
 		}
 		storageStr[block_pos]='.';
-		int temp = block_pos*5;
+		int temp = block_pos*5+40;
 		XY=std::to_string(temp) += ".19";
 		
 

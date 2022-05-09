@@ -31,6 +31,7 @@ protected:
 	// create messages that are used to published feedback/result
 	low_level_controller::ll_client_serverFeedback feedback_;
 	low_level_controller::ll_client_serverResult result_;
+	unsigned int microsecond;
 
 public:
 LLController(std::string controller_id, int argc,char** argv) :
@@ -48,6 +49,7 @@ void executeCB(const low_level_controller::ll_client_serverGoalConstPtr &goal)
  {
 //llserver
 	bool success = true;
+	unsigned int microsecond = 1000000;
 	
 	int size = sizeof(goal->task);
 	
@@ -206,6 +208,12 @@ ROS_INFO("%s controller: running", controller_name_.c_str());
 					}
 					
 				}
+
+					else if(goal->task[i]  == "wait")
+				{
+					usleep(5*microsecond); // sleeps for 3 seconds
+					
+				}
 		//checks
 					else
 					{
@@ -251,6 +259,7 @@ protected:
 	// create messages that are used to published feedback/result
 	low_level_controller::ll_client_serverFeedback feedback_;
 	low_level_controller::ll_client_serverResult result_;
+	unsigned int microsecond;
 
 public:
 LLController_o(std::string controller_id, int argc,char** argv) :
@@ -268,7 +277,7 @@ void executeCB(const low_level_controller::ll_client_serverGoalConstPtr &goal)
  {
 //llserver
 	bool success = true;
-	
+	unsigned int microsecond = 1000000;
 	int32_t size = sizeof(goal->task);
 	
 	//spin
@@ -423,6 +432,11 @@ ROS_INFO("%s controller: running", controller_name_.c_str());
 					ROS_INFO("Action did not finish before the time out.");
 					}
 						
+				}
+					else if(goal->task[i]  == "wait")
+				{
+					usleep(5*microsecond); // sleeps for 3 seconds
+					
 				}
 		//checks
 					else
