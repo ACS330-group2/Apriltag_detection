@@ -21,7 +21,7 @@ protected:
 	mm_actions::mmResult result_;
 	ros::Subscriber feedback;
 	bool completed;
-
+	unsigned int microsecond;
 public:
 MMAction(std::string mm_id) :
 as_(nh_, mm_id, boost::bind(&MMAction::executeCB, this, _1), false), mm_name_(mm_id)
@@ -48,12 +48,23 @@ ros::Publisher location_pub = nh_.advertise<std_msgs::Int32>("location", 1000);
 
 
 std_msgs::Int32 locationX;
+	unsigned int microsecond = 1000000;
        while(completed != true && ros::ok())
 	{
-		locationX.data = goal->location[0];
-		location_pub.publish(locationX);
-		ros::spinOnce();
+		
+	locationX.data = goal->location[0];
+	location_pub.publish(locationX);
+	
+	usleep(1*microsecond); // sleeps for seconds
+	
 	}
+	ros::spinOnce();
+	locationX.data = 0;
+for(int i=0;i>=4;i++){
+	location_pub.publish(locationX);
+	usleep(0.5*microsecond);
+}
+	
 	result_.complete = true;
 	ROS_INFO("%s task completed", mm_name_.c_str());
 	as_.setSucceeded(result_);	
@@ -70,6 +81,7 @@ void feedbackCallback(const std_msgs::Int32::ConstPtr& feedback)
 	}
 	else 
 	completed= false;
+	ROS_INFO("Completed = false");
 }
 
 

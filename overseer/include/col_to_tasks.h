@@ -24,7 +24,7 @@ std::vector<std::string>  col_to_tasks(char colour, std::string location )
 			    tasks.push_back(location);
 			    tasks.push_back("end");
 			}
-	if(colour == 'b')
+	if(colour == 'y')
 			{
 			//tasks.push_back("test0"); // Adds an element
 			    tasks.push_back("MM1");

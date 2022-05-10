@@ -48,11 +48,11 @@ public:
 	actionlib::SimpleActionClient<low_level_controller::ll_client_serverAction> acI("input", true);
 	actionlib::SimpleActionClient<low_level_controller::ll_client_serverAction> acO("output", true);
 	ROS_INFO("%s: Activated", overseer_id.c_str());
-	detected = n.subscribe("color_detected", 1000, &Overseer::detectionCallback,this);
+	detected = n.subscribe("Color_Detected", 1000, &Overseer::detectionCallback,this);
 	detected = n.subscribe("order", 1000, &Overseer::orderCallback,this);
 		
 
-	char storageStr[16]={'.','.','.','r','.','.','.','.','b','.','.','.','.','.','g','.'};
+	char storageStr[16]={'.','.','.','r','.','.','.','.','y','.','.','.','.','.','g','.'};
 	std::string location;
 	int dot_pos;
 	int block_pos;
@@ -67,13 +67,13 @@ while(ros::ok()){
 	char colour;
 	bool full = true;
 	std::string XY;
-	char combination[3] = {'r','g','b'};
+	char combination[3] = {'o','o','o'};
 	colour = 'o';
 	
 
 
 
-ROS_INFO("Sending goals.");
+
 
 	unsigned int microsecond = 1000000;
 	usleep(3*microsecond); // sleeps for 3 seconds
@@ -81,7 +81,7 @@ ROS_INFO("Sending goals.");
 	actionlib::SimpleClientGoalState state_O = acO.getState();
 
 	//goal combined
-	while( colour == 'o'&&ros::ok()&&combination[1] == 'o')
+	if( colour == 'o'&&ros::ok()&&combination[1] == 'o')
 {
 	ROS_INFO("no input detetcted");
 	ros::spinOnce();
@@ -175,16 +175,14 @@ ROS_INFO("Sending goals.");
 	ros::spinOnce();	
 	}
 	}
-void detectionCallback(const std_msgs::Char::ConstPtr& detected)
+void detectionCallback(const std_msgs::String::ConstPtr& detected)
 {
-	if(detected->data =='r'||detected->data =='b'||detected->data =='g')
+	if(detected->data[0] =='r'||detected->data[0] =='y'||detected->data[0] =='g'||detected->data[0] =='o')
 	{
-	colour = detected->data;
+	colour = detected->data[0];
 	ROS_INFO("colour recieved");
 	}
-	else{
-	colour = 'o';
-	}
+	
 }
 
 void orderCallback(const std_msgs::String::ConstPtr& order)
